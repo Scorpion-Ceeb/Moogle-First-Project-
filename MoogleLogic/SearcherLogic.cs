@@ -1,7 +1,7 @@
 namespace MoogleLogic;
 
 
-public class SearcherLogic
+public class SearcherLogic : ISearcherLogic
 {
     public IReadQuery ReadQuery{ get;}
     public IWordsValue WordsValue{ get;}
