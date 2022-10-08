@@ -1,15 +1,25 @@
 ﻿namespace MoogleLogic;
 
-
-public interface IWordValue
+public interface IDependencyContainer
 {
-    void Calculate(string[] paths, AllTextsInfo info, TextsPerDoc textPerDoc);
+    public void Register(Type interfaceType, Type implementationType);
+    public object GetInstance(Type t);
+}
+public interface IWordsValue
+{
+    void GetValue(Document[] docs);
 }
 public interface ILoadInfo
 {
-    void Load(string[] paths, AllTextsInfo info, TextsPerDoc texts);
+    Document[] Load(string[] paths);
 }
 public interface IReadQuery
 {
-    string[] Read(string[] wordsQuery, Searcher searcher);
+    InputUser Read(string[] query);
+}
+public interface ISearcherLogic
+{
+    IReadQuery ReadQuery{ get;}
+    IWordsValue WordsValue{ get;}
+    ILoadInfo LoadInfo{ get;}
 }

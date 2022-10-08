@@ -4,49 +4,52 @@ namespace MoogleLogic;
 
 public class LoadInfo : ILoadInfo
 {
-    public void Load(string[] paths, AllTextsInfo info, TextsPerDoc textsPerDoc)
+    public Document[] Load(string[] paths)
     {
+        List<Document> documents = new List<Document>();
+
         for(int i = 0; i < paths.Length; i++)
         {
-            info.TryAdd(paths[i], new TextInfo());
-            textsPerDoc.Add(paths[i], new List<string>());
+            TextInfo info = new TextInfo();
             StringBuilder textBuilder = new StringBuilder();
-            string wordTemp = "";
 
-            LoadTextFromStream(paths[i], wordTemp, textBuilder);
+            LoadTextFromStream(paths[i], textBuilder);
             
             string[] text = BuildText(textBuilder);
             
-            LoadTextInfo(text, paths, info, textsPerDoc, i);
+            LoadTextInfo(text, info, documents);
+
+            documents.Add(new Document(text, paths[i], info));
         }
+        return documents.ToArray();
     }
-    private void LoadTextFromStream(string path, string tempWord, StringBuilder text)
+    private void LoadTextFromStream(string path, StringBuilder text)
     {
+        string wordTemp = "";
         using (StreamReader sr = new StreamReader($@"{path}")){
-            while((tempWord = sr.ReadLine()) != null)
-                text.Append(tempWord + " ");
+            while((wordTemp = sr.ReadLine()!) != null)
+                text.Append(wordTemp + " ");
         }
     }
-    private void LoadTextInfo(string[] text, string[] paths, AllTextsInfo info, TextsPerDoc textsPerDoc, int i)
+    private void LoadTextInfo(string[] text, TextInfo info, List<Document> documents)
     {
         int wordIndex = 0;
 
         for (int j = 0; j < text.Length; j++)
         {
-            textsPerDoc[paths[i]].Add(text[j]);
             string word = text[j].ToLower();
             
-            if(!info[paths[i]].TryAdd(word, new WordProp(1, 1, wordIndex))){
-                info[paths[i]][word].Times++;
-                info[paths[i]][word].Indexes.Add(wordIndex);
+            if(!info.TryAdd(word, new WordProp(1, 1, wordIndex))){
+                info[word].Times++;
+                info[word].Indexes.Add(wordIndex);
             }
             else
             {
-                for (int k = 1; k <= i; k++)
+                for (int k = 0; k < documents.Count(); k++)
                 {
-                    if(info[paths[i-k]].ContainsKey(word)){
-                        info[paths[i-k]][word].TimesInCorpus += 1;
-                        info[paths[i]][word].TimesInCorpus = info[paths[i-k]][word].TimesInCorpus;
+                    if(documents[k].Info.ContainsKey(word)){
+                        documents[k].Info[word].TimesInCorpus += 1;
+                        info[word].TimesInCorpus = documents[k].Info[word].TimesInCorpus;
                     }
                 }
             }

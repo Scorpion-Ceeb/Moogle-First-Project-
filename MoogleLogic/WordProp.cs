@@ -10,11 +10,9 @@ public class WordProp
     //Score = El valor del TF-IDF de la palabra en el documento
     //Indexes = Los indices de la palabra en el texto para realizar otras funciones
     //PlusValue = Para dar un valor extra al Score cuando se use algun tipo de operador
-    //SnippetValue = Fragamento de texto donde se encuentra la palabra a buscar
 
-    //Metodos = Calcular el TF-IDF
-    public WordProp(int initial, int timesInCorpus, int firstIndex){
-        Times = initial;
+    public WordProp(int firstTime, int timesInCorpus, int firstIndex){
+        Times = firstTime;
         TimesInCorpus = timesInCorpus;
         Indexes = new List<int>();
         Indexes.Add(firstIndex);
